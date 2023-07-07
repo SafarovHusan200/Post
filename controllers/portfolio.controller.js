@@ -2,6 +2,8 @@ const Portfolio = require("../models/portfolio.model");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middlewares/async");
 const uuid = require("uuid");
+const fs = require("fs");
+const path = require("path");
 
 // @descr   Get all portfolio
 // @Route   GET /api/v1/portfolio
@@ -53,6 +55,13 @@ exports.updatePortfolio = asyncHandler(async (req, res, next) => {
   if (!portfolio) {
     return next(new ErrorResponse("Post not found", 404));
   }
+  fs.unlink(path.join(__dirname, "..", "public", portfolio.image), (err) => {
+    if (err) {
+      console.error("Error while deleting file:", err);
+    } else {
+      console.log("File deleted successfully");
+    }
+  });
   const updatePortfolio = await Portfolio.findByIdAndUpdate(
     req.params.id,
     {
@@ -76,9 +85,18 @@ exports.updatePortfolio = asyncHandler(async (req, res, next) => {
 // @Access  Private
 exports.deletePortfolio = asyncHandler(async (req, res, next) => {
   const delData = await Portfolio.findByIdAndRemove(req.params.id);
+  // const delData = await Portfolio.findById(req.params.id);
   if (!delData) {
     return next(new ErrorResponse("Post not found", 404));
   }
+  fs.unlink(path.join(__dirname, "..", "public", delData.image), (err) => {
+    if (err) {
+      console.error("Error while deleting file:", err);
+    } else {
+      console.log("File deleted successfully");
+    }
+  });
+
   res.status(201).json({
     success: "true",
     message: "Delete Portfolio Successfully",

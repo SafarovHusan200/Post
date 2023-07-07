@@ -14,7 +14,7 @@ const router = Router();
 router.get("/", getAllPortfolio);
 router.post("/", upload.single("image"), createPortfolio);
 router.get("/:id", getPortfolioById);
-router.put("/:id", upload.single("images"), updatePortfolio);
+router.put("/:id", upload.single("image"), updatePortfolio);
 router.delete("/:id", deletePortfolio);
 
 module.exports = router;
