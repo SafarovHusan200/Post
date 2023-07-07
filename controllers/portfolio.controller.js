@@ -55,13 +55,18 @@ exports.updatePortfolio = asyncHandler(async (req, res, next) => {
   if (!portfolio) {
     return next(new ErrorResponse("Post not found", 404));
   }
-  fs.unlink(path.join(__dirname, "..", "public", portfolio.image), (err) => {
-    if (err) {
-      console.error("Error while deleting file:", err);
-    } else {
-      console.log("File deleted successfully");
-    }
-  });
+  req.file
+    ? fs.unlink(
+        path.join(__dirname, "..", "public", portfolio.image),
+        (err) => {
+          if (err) {
+            console.error("Error while deleting file:", err);
+          } else {
+            console.log("File deleted successfully");
+          }
+        }
+      )
+    : null;
   const updatePortfolio = await Portfolio.findByIdAndUpdate(
     req.params.id,
     {
